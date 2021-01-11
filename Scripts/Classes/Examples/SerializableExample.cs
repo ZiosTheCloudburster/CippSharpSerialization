@@ -1,8 +1,10 @@
 ﻿using System;
 using System.IO;
 using CippSharp.Core;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,10 +20,10 @@ namespace CippSharp.Experimental.Examples
 
         [Header("Data:")]
         public BinaryHolder binaryHolder = null;
-        
+#if UNITY_EDITOR
         [Header("References:")]
         [SerializeField] public SceneAsset sceneAsset = null;
-
+#endif
         [Header(Constants.Commands + ":")]
         public bool saveScene = false;
         public bool loadScene = false;
@@ -66,6 +68,7 @@ namespace CippSharp.Experimental.Examples
 
         private void TryLoadScene()
         {
+#if UNITY_EDITOR
             Scene scene = binaryHolder.Deserialize<Scene>();
             try
             {
@@ -84,6 +87,7 @@ namespace CippSharp.Experimental.Examples
 //            {
                 Debug.Log(LogName+"Scene loaded.", this);
 //            }
+#endif
         }
     }
 }
