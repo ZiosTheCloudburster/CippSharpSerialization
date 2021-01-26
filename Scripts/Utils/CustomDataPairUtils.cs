@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CippSharp.Core.Extensions;
 using UnityEngine;
 
 namespace CippSharp.Experimental
@@ -133,68 +134,96 @@ namespace CippSharp.Experimental
         }
 
         /// <summary>
-        /// Converts an array of CustomDataPairs to Dictionary string, string
-        /// </summary>
-        /// <param name="customDataPairs"></param>
-        /// <returns></returns>
-        public static Dictionary<string, string> ToDictionary(CustomDataPair[] customDataPairs)
-        {
-            if (customDataPairs == null)
-            {
-                return null;
-            }
-
-            Dictionary<string, string> dataPairs = new Dictionary<string, string>();
-            for (var i = 0; i < customDataPairs.Length; i++)
-            {
-                CustomDataPair customDataPair = customDataPairs[i];
-                dataPairs[customDataPair.Key] = customDataPair.Value;
-            }
-            return dataPairs;
-        }
-
-        /// <summary>
-        /// Converts a Dictionary string, string to CustomDataPairs
-        /// </summary>
-        /// <param name="dataPairs"></param>
-        /// <returns></returns>
-        public static CustomDataPair[] ToCustomDataPairs(Dictionary<string, string> dataPairs)
-        {
-            if (dataPairs == null)
-            {
-                return null;
-            }
-            List<CustomDataPair> customDataPairs = new List<CustomDataPair>();
-            KeyValuePair<string, string>[] dataPairsArray = dataPairs.ToArray();
-            for (int i = 0; i < dataPairsArray.Length; i++)
-            {
-                KeyValuePair<string, string> valuePair = dataPairsArray[i];
-                customDataPairs.Add((CustomDataPair)valuePair);
-            }
-
-            return customDataPairs.ToArray();
-        }
-
-        /// <summary>
-        /// Converts CustomDataPairs array to a single string of text
+        /// Converts CustomDataPairs array or list to a single string of text
         /// </summary>
         /// <returns></returns>
-        public static string ToText(CustomDataPair[] customDataPairs)
+        public static string ToText(CustomDataPair[] array)
         {
-            if (customDataPairs == null)
+            if (array.IsNullOrEmpty())
             {
                 return string.Empty;
             }
-
+            
             string text = string.Empty;
-            for (int i = 0; i < customDataPairs.Length; i++)
+            for (int i = 0; i < array.Length; i++)
             {
-                CustomDataPair customDataPair = customDataPairs[i];
-                text += (i == customDataPairs.Length - 1)
-                    ? $"{customDataPair.ToLine()}"
-                    : $"{customDataPair.ToLine()}{Environment.NewLine}";
+                CustomDataPair pair = array[i];
+                text += (i == array.Length - 1) ? pair.ToLine() : pair.ToLine() + Environment.NewLine;
             }
             return text;
+        }
+
+        /// <summary>
+        /// Converts CustomDataPairs array or list to a single string of text
+        /// </summary>
+        /// <returns></returns>
+        public static string ToText(List<CustomDataPair> list)
+        {
+            if (list.IsNullOrEmpty())
+            {
+                return string.Empty;
+            }
+            
+            string text = string.Empty;
+            for (int i = 0; i < list.Count; i++)
+            {
+                CustomDataPair pair = list[i];
+                text += (i == list.Count - 1) ? pair.ToLine() : pair.ToLine() + Environment.NewLine;
+            }
+            return text;
+        }
+
+        /// <summary>
+        /// Converts plain text to CustomDataPairs list
+        /// </summary>
+        /// <param name="writtenDataPairs"></param>
+        /// <returns></returns>
+        public static IEnumerable<CustomDataPair> FromText(string writtenDataPairs)
+        {
+            List<CustomDataPair> customDataPairs = new List<CustomDataPair>();
+            const string replace = "<S_NL>";
+            string[] splitResult = writtenDataPairs.ReplaceNewLine(replace).Split(new[]{replace}, StringSplitOptions.RemoveEmptyEntries);
+            if (!splitResult.IsNullOrEmpty())
+            {
+                foreach (var split in splitResult)
+                {
+                    if (CustomDataPair.TryParse(split, out CustomDataPair parsedPair))
+                    {
+                        customDataPairs.Add(parsedPair);
+                    }
+                }
+            }
+            return customDataPairs;
+        }
+
+        /// <summary>
+        /// Converts an IEnumerable of custom data pair to an IEnumerable of KeyValuePair string string
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        public static IEnumerable<KeyValuePair<string, string>> ToKeyValuePairs(IEnumerable<CustomDataPair> data)
+        {
+            return data.Select(Selector);
+            
+            KeyValuePair<string, string> Selector(CustomDataPair d)
+            {
+                return (KeyValuePair<string, string>)d;
+            }
+        }
+
+        /// <summary>
+        /// Converts an IEnumerable of KeyValuePair string string to an IEnumerable of custom data pair
+        /// </summary>
+        /// <param name="dictionary"></param>
+        /// <returns></returns>
+        public static IEnumerable<CustomDataPair> ToCustomDataPairs(IEnumerable<KeyValuePair<string, string>> dictionary)
+        {
+            return dictionary.Select(Selector);
+            
+            CustomDataPair Selector(KeyValuePair<string, string> keyPair)
+            {
+                return (CustomDataPair) keyPair;
+            }
         }
     }
 }
