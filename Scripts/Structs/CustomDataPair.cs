@@ -1,13 +1,14 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using CippSharp.Core;
 using CippSharp.Core.Extensions;
 using UnityEngine;
 
 namespace CippSharp.Experimental
 {
     [Serializable]
-    public struct CustomDataPair
+    public struct CustomDataPair : ISimplePair<string, string>
     {
         /// <summary>
         /// Data separator between key and value
@@ -34,14 +35,13 @@ namespace CippSharp.Experimental
             get => this.value;
             set => this.value = value;
         }
-
+    
         public CustomDataPair(string key, string value)
         {
             this.key = key;
             this.value = value;
         }
 
-        
         public CustomDataPair(KeyValuePair<string, string> pair)
         {
             this.key = pair.Key;
@@ -51,6 +51,27 @@ namespace CippSharp.Experimental
         public override string ToString()
         {
             return base.ToString();
+        }
+
+        /// <summary>
+        /// The representation of this data pair as line for a file
+        /// </summary>
+        /// <returns></returns>
+        public string ToLineWithQuotations()
+        {
+            string writtenKey = 
+                Key.Replace(DataSeparatorChar.ToString(), EqualSymbol)
+                    .Replace(QuotationMarkChar.ToString(), QuotationMarkSymbol)
+                    .ReplaceEmptyLine(NewLineSymbol)
+                    .ReplaceNewLine(NewLineSymbol);
+
+            string writtenValue =
+                Value.Replace(DataSeparatorChar.ToString(), EqualSymbol)
+                    .Replace(QuotationMarkChar.ToString(), QuotationMarkSymbol)
+                    .ReplaceEmptyLine(NewLineSymbol)
+                    .ReplaceNewLine(NewLineSymbol);;
+            
+            return $"\"{writtenKey}\"{DataSeparatorChar}\"{writtenValue}\"";
         }
 
         /// <summary>
@@ -71,9 +92,9 @@ namespace CippSharp.Experimental
                     .ReplaceEmptyLine(NewLineSymbol)
                     .ReplaceNewLine(NewLineSymbol);;
             
-            return $"\"{writtenKey}\"{DataSeparatorChar}\"{writtenValue}\"";
+            return $"{writtenKey}{DataSeparatorChar}{writtenValue}";
         }
-
+        
         /// <summary>
         /// Parse a line and converts it to CustomDataPair
         /// </summary>
@@ -117,6 +138,11 @@ namespace CippSharp.Experimental
             }
         }
 
+        public void EditValue(string newValue)
+        {
+            this.value = newValue;
+        }
+
         /// <summary>
         /// Operator to convert to KeyValuePair
         /// </summary>
@@ -136,5 +162,16 @@ namespace CippSharp.Experimental
         {
             return new CustomDataPair(valuePair.Key, valuePair.Value);
         }
+        
+        public KeyValuePair<string, string> ToKeyValuePair()
+        {
+            return this;
+        }
+    }
+    
+    [Serializable]
+    public class CustomDataPairList : ListContainer<CustomDataPair>
+    {
+               
     }
 }
