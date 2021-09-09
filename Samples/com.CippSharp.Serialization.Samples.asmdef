@@ -1,0 +1,15 @@
+{
+    "name": "com.CippSharp.Serialization.Samples",
+    "references": [
+        "GUID:a94499d379ff77f4e9ca2c3425ec2ad7"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -5,7 +5,7 @@ using CippSharp.Core;
 using CippSharp.Core.Extensions;
 using UnityEngine;
 
-namespace CippSharp.Experimental
+namespace CippSharp.Serialization
 {
     [Serializable]
     public struct CustomDataPair : ISimplePair<string, string>

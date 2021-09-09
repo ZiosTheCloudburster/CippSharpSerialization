@@ -1,16 +1,16 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using CippSharp.Core;
 using UnityEngine;
 
 #if UNITY_EDITOR
 using System.IO;
 using CippSharp.Core.Extensions;
-using CippSharpEditor.Core;
 using UnityEditor;
 #endif
 
-namespace CippSharp.Experimental
+namespace CippSharp.Serialization
 {
 	[CreateAssetMenu(menuName = nameof(CippSharp)+"/Data Assets/Binary Holder")]
     public class BinaryHolder : ScriptableObject
@@ -61,7 +61,11 @@ namespace CippSharp.Experimental
             }
 
             fullType = target.GetType().FullName;
-            return SerializationUtils.Serialize(target, out bytes, this);
+	        var result = SerializationUtils.Serialize(target, out bytes, this);
+#if UNITY_EDITOR
+	        EditorUtility.SetDirty(this);
+#endif
+            return result;
         }
 
         /// <summary>

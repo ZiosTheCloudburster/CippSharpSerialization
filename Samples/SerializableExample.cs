@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using CippSharp.Core;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -8,7 +7,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace CippSharp.Experimental.Examples
+namespace CippSharp.Serialization.Examples
 {
     [ExecuteInEditMode]
     public class SerializableExample : MonoBehaviour
@@ -24,7 +23,7 @@ namespace CippSharp.Experimental.Examples
         [Header("References:")]
         [SerializeField] public SceneAsset sceneAsset = null;
 #endif
-        [Header(Constants.Commands + ":")]
+        [Header("Commands:")]
         public bool saveScene = false;
         public bool loadScene = false;
         
@@ -85,7 +84,7 @@ namespace CippSharp.Experimental.Examples
             }
 //            if (SceneManager.SetActiveScene(scene))
 //            {
-                Debug.Log(LogName+"Scene loaded.", this);
+            Debug.Log(LogName+"Scene loaded.", this);
 //            }
 #endif
         }

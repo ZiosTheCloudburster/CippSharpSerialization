@@ -6,7 +6,7 @@ using CippSharp.Core;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace CippSharp.Experimental
+namespace CippSharp.Serialization
 {
     public static class SerializationUtils
     {

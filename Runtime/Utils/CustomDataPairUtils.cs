@@ -5,7 +5,7 @@ using System.Linq;
 using CippSharp.Core.Extensions;
 using UnityEngine;
 
-namespace CippSharp.Experimental
+namespace CippSharp.Serialization
 {
     public static class CustomDataPairUtils
     {
