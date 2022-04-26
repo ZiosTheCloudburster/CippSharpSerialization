@@ -2,7 +2,7 @@
 Custom Data Serialization
 
 ## Dependencies
-- [CippSharpCore](https://github.com/ZiosTheCloudburster/CippSharpCore)
+- [CippSharpCore](https://github.com/ZiosTheCloudburster/CippSharpCore) → 0.8.0
 
 ### Content:
 Contains CustomDataPairs and BinaryHolder and few examples with 'tips'.
