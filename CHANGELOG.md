@@ -3,6 +3,11 @@
 - Y major changes and bug fixing
 - X minor changes and bug fixing
 
+## Version 2.1.0
+- fixed compatibility with containers and binary holder
+- fixed not saving binary holder (sometimes)
+- updated dependencies tag
+
 ## Version 2.0.1
 - readme and tested package
 - removed dependencies from package, download them manually.
