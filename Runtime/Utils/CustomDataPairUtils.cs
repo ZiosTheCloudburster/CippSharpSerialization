@@ -10,6 +10,18 @@ namespace CippSharp.Serialization
     public static class CustomDataPairUtils
     {
         /// <summary>
+        /// A nicer contextual name usable for logs.
+        /// </summary>
+        public static readonly string LogName = $"[{typeof(CustomDataPairUtils).Name}]: ";
+        
+        /// <summary>
+        /// Temporary new line replace from 'totext' conversion.
+        /// </summary>
+        public const string TemporaryNewLineReplace = "<T_NL>";
+
+        #region Write CustomDataPair to File
+        
+        /// <summary>
         /// Tries to write a dictionary by converting it in custom data pairs
         /// </summary>
         /// <param name="fullPath"></param>
@@ -40,10 +52,14 @@ namespace CippSharp.Serialization
             }
             catch (Exception e)
             {
-                Debug.LogError($"Failed to write data. Error {e.Message}");
+                Debug.LogError(LogName+$"{nameof(TryWrite)} Failed to write data. Caught exception: {e.Message}.");
                 return false;
             }
         }
+        
+        #endregion
+        
+        #region Read CustomDataPair from File
         
         /// <summary>
         /// Tries to read a dictionary by converting custom data pairs
@@ -81,22 +97,23 @@ namespace CippSharp.Serialization
         {
             try
             {
-                List<CustomDataPair> customDataPairs = new List<CustomDataPair>();
+//                List<CustomDataPair> customDataPairs = new List<CustomDataPair>();
                 string[] lines = File.ReadAllLines(fullPath);
-                for (int i = 0; i < lines.Length; i++)
-                {
-                    CustomDataPair parsed;
-                    if (CustomDataPair.TryParse(lines[i], out parsed))
-                    {
-                        customDataPairs.Add(parsed);
-                    }
-                }
-                dataPairs = customDataPairs.ToArray();
-                return true;
+                return TryRead(lines, out dataPairs);
+//                for (int i = 0; i < lines.Length; i++)
+//                {
+//                    CustomDataPair parsed;
+//                    if (CustomDataPair.TryParse(lines[i], out parsed))
+//                    {
+//                        customDataPairs.Add(parsed);
+//                    }
+//                }
+//                dataPairs = customDataPairs.ToArray();
+//                return true;
             }
             catch (Exception e)
             {
-                Debug.LogError($"Failed to read data. Error {e.Message}");
+                Debug.LogError(LogName+$"{nameof(TryRead)} Failed to read data. Caught exception: {e.Message}.");
                 dataPairs = null;
                 return false;
             }   
@@ -127,17 +144,21 @@ namespace CippSharp.Serialization
             }
             catch (Exception e)
             {
-                Debug.LogError($"Failed to read data. Error {e.Message}");
+                Debug.LogError(LogName+$"{nameof(TryRead)} Failed to read data. Caught exception: {e.Message}.");
                 dataPairs = null;
                 return false;
             }   
         }
 
+        #endregion
+
+        #region To Text
+        
         /// <summary>
         /// Converts CustomDataPairs array or list to a single string of text
         /// </summary>
         /// <returns></returns>
-        public static string ToText(CustomDataPair[] array)
+        public static string ToText(IList<CustomDataPair> array)
         {
             if (array.IsNullOrEmpty())
             {
@@ -145,57 +166,67 @@ namespace CippSharp.Serialization
             }
             
             string text = string.Empty;
-            for (int i = 0; i < array.Length; i++)
+            for (int i = 0; i < array.Count; i++)
             {
                 CustomDataPair pair = array[i];
-                text += (i == array.Length - 1) ? pair.ToLine() : pair.ToLine() + Environment.NewLine;
+                text += (i == array.Count - 1) ? pair.ToLine() : pair.ToLine() + Environment.NewLine;
             }
             return text;
         }
 
-        /// <summary>
-        /// Converts CustomDataPairs array or list to a single string of text
-        /// </summary>
-        /// <returns></returns>
-        public static string ToText(List<CustomDataPair> list)
-        {
-            if (list.IsNullOrEmpty())
-            {
-                return string.Empty;
-            }
-            
-            string text = string.Empty;
-            for (int i = 0; i < list.Count; i++)
-            {
-                CustomDataPair pair = list[i];
-                text += (i == list.Count - 1) ? pair.ToLine() : pair.ToLine() + Environment.NewLine;
-            }
-            return text;
-        }
+//        /// <summary>
+//        /// Converts CustomDataPairs array or list to a single string of text
+//        /// </summary>
+//        /// <returns></returns>
+//        public static string ToText(List<CustomDataPair> list)
+//        {
+//            if (list.IsNullOrEmpty())
+//            {
+//                return string.Empty;
+//            }
+//            
+//            string text = string.Empty;
+//            for (int i = 0; i < list.Count; i++)
+//            {
+//                CustomDataPair pair = list[i];
+//                text += (i == list.Count - 1) ? pair.ToLine() : pair.ToLine() + Environment.NewLine;
+//            }
+//            return text;
+//        }
+        
+        #endregion
 
+        #region From Text
+        
         /// <summary>
         /// Converts plain text to CustomDataPairs list
         /// </summary>
         /// <param name="writtenDataPairs"></param>
         /// <returns></returns>
-        public static IEnumerable<CustomDataPair> FromText(string writtenDataPairs)
+        public static IList<CustomDataPair> FromText(string writtenDataPairs)
         {
             List<CustomDataPair> customDataPairs = new List<CustomDataPair>();
-            const string replace = "<S_NL>";
-            string[] splitResult = writtenDataPairs.ReplaceNewLine(replace).Split(new[]{replace}, StringSplitOptions.RemoveEmptyEntries);
-            if (!splitResult.IsNullOrEmpty())
+           
+            string[] splitResult = writtenDataPairs.ReplaceNewLine(TemporaryNewLineReplace).Split(new[]{TemporaryNewLineReplace}, StringSplitOptions.RemoveEmptyEntries);
+            if (splitResult.IsNullOrEmpty())
             {
-                foreach (var split in splitResult)
+                return customDataPairs;
+            }
+            
+            foreach (var split in splitResult)
+            {
+                if (CustomDataPair.TryParse(split, out CustomDataPair parsedPair))
                 {
-                    if (CustomDataPair.TryParse(split, out CustomDataPair parsedPair))
-                    {
-                        customDataPairs.Add(parsedPair);
-                    }
+                    customDataPairs.Add(parsedPair);
                 }
             }
             return customDataPairs;
         }
+        
+        #endregion
 
+        #region Casts
+        
         /// <summary>
         /// Converts an IEnumerable of custom data pair to an IEnumerable of KeyValuePair string string
         /// </summary>
@@ -225,6 +256,8 @@ namespace CippSharp.Serialization
                 return (CustomDataPair) keyPair;
             }
         }
+        
+        #endregion
     }
 }
 

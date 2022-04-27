@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
-using CippSharp.Core;
+using CippSharp.Core.Utils;
 using UnityEngine;
 using Object = UnityEngine.Object;
 

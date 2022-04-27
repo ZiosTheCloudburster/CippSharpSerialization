@@ -1,12 +1,12 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using CippSharp.Core;
+using CippSharp.Core.Extensions;
 using UnityEngine;
 
 #if UNITY_EDITOR
 using System.IO;
-using CippSharp.Core.Extensions;
+using CippSharp.Core.EditorUtils;
 using UnityEditor;
 #endif
 
@@ -18,7 +18,7 @@ namespace CippSharp.Serialization
         /// <summary>
         /// A nicer contextual name usable for logs.
         /// </summary>
-        public static readonly string LogName = string.Format("[{0}]: ", typeof(BinaryHolder).Name);
+        public static readonly string LogName = $"[{typeof(BinaryHolder).Name}]: ";
         
         /// <summary>
         /// Save the full type of the serialized object.
@@ -120,12 +120,12 @@ namespace CippSharp.Serialization
 				    int dataLength = binaryHolder.Length;
 				    if (index + elementsPerPage < dataLength)
 				    {
-					    inspectedElements = binaryHolder.GetBytes().SubArray(index, elementsPerPage);
+					    inspectedElements = binaryHolder.GetBytes().SubArrayOrDefault(index, elementsPerPage);
 				    }
 				    else
 				    {
 					    inspectedElements = binaryHolder.GetBytes()
-						    .SubArray(index, Mathf.Clamp(dataLength - index, 0, elementsPerPage));
+						    .SubArrayOrDefault(index, Mathf.Clamp(dataLength - index, 0, elementsPerPage));
 				    }
 
 				    try

@@ -1,9 +1,10 @@
 ﻿
 using System;
 using System.Collections.Generic;
-using CippSharp.Core;
+using CippSharp.Core.Containers;
 using CippSharp.Core.Extensions;
 using UnityEngine;
+
 
 namespace CippSharp.Serialization
 {
@@ -35,6 +36,8 @@ namespace CippSharp.Serialization
             get => this.value;
             set => this.value = value;
         }
+
+        #region Constructor
     
         public CustomDataPair(string key, string value)
         {
@@ -48,6 +51,8 @@ namespace CippSharp.Serialization
             this.value = pair.Value;
         }
         
+        #endregion
+        
         public override string ToString()
         {
             return base.ToString();
@@ -59,19 +64,7 @@ namespace CippSharp.Serialization
         /// <returns></returns>
         public string ToLineWithQuotations()
         {
-            string writtenKey = 
-                Key.Replace(DataSeparatorChar.ToString(), EqualSymbol)
-                    .Replace(QuotationMarkChar.ToString(), QuotationMarkSymbol)
-                    .ReplaceEmptyLine(NewLineSymbol)
-                    .ReplaceNewLine(NewLineSymbol);
-
-            string writtenValue =
-                Value.Replace(DataSeparatorChar.ToString(), EqualSymbol)
-                    .Replace(QuotationMarkChar.ToString(), QuotationMarkSymbol)
-                    .ReplaceEmptyLine(NewLineSymbol)
-                    .ReplaceNewLine(NewLineSymbol);;
-            
-            return $"\"{writtenKey}\"{DataSeparatorChar}\"{writtenValue}\"";
+            return WriteLine(key, value, true);
         }
 
         /// <summary>
@@ -80,20 +73,44 @@ namespace CippSharp.Serialization
         /// <returns></returns>
         public string ToLine()
         {
+            return WriteLine(key, value, false);
+        }
+
+        #region Write
+    
+        /// <summary>
+        /// The representation of this data pair as line for a file
+        /// </summary>
+        /// <returns></returns>
+        public static string WriteLine(CustomDataPair pair)
+        {
+            return WriteLine(pair.Key, pair.Value);
+        }
+
+        /// <summary>
+        /// The representation of this data pair as line for a file
+        /// </summary>
+        /// <returns></returns>
+        private static string WriteLine(string key, string value, bool withQuotationMarks = false)
+        {
             string writtenKey = 
-                Key.Replace(DataSeparatorChar.ToString(), EqualSymbol)
+                key.Replace(DataSeparatorChar.ToString(), EqualSymbol)
                     .Replace(QuotationMarkChar.ToString(), QuotationMarkSymbol)
                     .ReplaceEmptyLine(NewLineSymbol)
                     .ReplaceNewLine(NewLineSymbol);
 
             string writtenValue =
-                Value.Replace(DataSeparatorChar.ToString(), EqualSymbol)
+                value.Replace(DataSeparatorChar.ToString(), EqualSymbol)
                     .Replace(QuotationMarkChar.ToString(), QuotationMarkSymbol)
                     .ReplaceEmptyLine(NewLineSymbol)
                     .ReplaceNewLine(NewLineSymbol);;
-            
-            return $"{writtenKey}{DataSeparatorChar}{writtenValue}";
+
+            return withQuotationMarks ? 
+                $"\"{writtenKey}\"{DataSeparatorChar}\"{writtenValue}\"" : 
+                $"{writtenKey}{DataSeparatorChar}{writtenValue}";
         }
+        
+        #endregion
         
         /// <summary>
         /// Parse a line and converts it to CustomDataPair
@@ -165,13 +182,7 @@ namespace CippSharp.Serialization
         
         public KeyValuePair<string, string> ToKeyValuePair()
         {
-            return this;
+            return new KeyValuePair<string, string>(Key, Value);
         }
-    }
-    
-    [Serializable]
-    public class CustomDataPairList : ListContainer<CustomDataPair>
-    {
-               
     }
 }
