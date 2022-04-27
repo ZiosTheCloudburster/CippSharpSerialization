@@ -15,7 +15,7 @@
     "url" : "https://github.com/ZiosTheCloudburster/CippSharpSerialization.git"
   },
   "dependencies": {
-    "com.cippsharpcore.containers" : "git+https://github.com/ZiosTheCloudburster/CippSharpCoreContainers.git#1.0.1",
-    "com.cippsharpcore.utilsandextensions" : "git+https://github.com/ZiosTheCloudburster/CippSharpCoreUtilsAndExtensions.git#1.1.0"
+    "com.cippsharpcore.containers" : "git+https://github.com/ZiosTheCloudburster/CippSharpCoreContainers.git#v1.0.1",
+    "com.cippsharpcore.utilsandextensions" : "git+https://github.com/ZiosTheCloudburster/CippSharpCoreUtilsAndExtensions.git#v1.1.0"
   }
 }
