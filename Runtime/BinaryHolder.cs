@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using CippSharp.Core.Containers;
 using CippSharp.Core.Extensions;
 using UnityEngine;
 
@@ -13,7 +14,7 @@ using UnityEditor;
 namespace CippSharp.Serialization
 {
 	[CreateAssetMenu(menuName = nameof(CippSharp)+"/Data Assets/Binary Holder")]
-    public class BinaryHolder : ScriptableObject
+    public class BinaryHolder : AHiddenListDataAsset<byte>
     {
         /// <summary>
         /// A nicer contextual name usable for logs.
@@ -28,7 +29,13 @@ namespace CippSharp.Serialization
         /// <summary>
         /// The stored bytes.
         /// </summary>
-        [SerializeField, HideInInspector] private List<byte> bytes = new List<byte>();
+        //[SerializeField, HideInInspector] 
+        private List<byte> bytes
+        {
+	        get => value;
+	        set => this.value = value;
+        }
+	    
         /// <summary>
         /// Returns an array copy of the stored bytes;
         /// </summary>
@@ -61,7 +68,7 @@ namespace CippSharp.Serialization
             }
 
             fullType = target.GetType().FullName;
-	        var result = SerializationUtils.Serialize(target, out bytes, this);
+	        var result = SerializationUtils.Serialize(target, out value, this);
 #if UNITY_EDITOR
 	        EditorUtility.SetDirty(this);
 #endif
@@ -185,8 +192,7 @@ namespace CippSharp.Serialization
 					    PageIndex = Mathf.Clamp(PageIndex, 0, pagesLength);
 					    PageIndex = EditorGUILayout.IntSlider(PageIndex, 0, pagesLength);
 
-					    EditorGUILayout.LabelField(string.Format("Displaying page: {0}/{1}.", PageIndex.ToString(),
-						    pagesLength.ToString()));
+					    EditorGUILayout.LabelField($"Displaying page: {PageIndex.ToString()}/{pagesLength.ToString()}.");
 					    EditorGUI.indentLevel++;
 					    bool guiEnabled = GUI.enabled;
 					    GUI.enabled = false;
@@ -197,8 +203,7 @@ namespace CippSharp.Serialization
 					    }
 
 					    GUI.enabled = guiEnabled;
-					    EditorGUILayout.LabelField(string.Format("Displaying elements: {0}/{1}",
-						    inspectedElements.Length.ToString(), elementsPerPage.ToString()));
+					    EditorGUILayout.LabelField($"Displaying elements: {inspectedElements.Length.ToString()}/{elementsPerPage.ToString()}");
 					    EditorGUI.indentLevel--;
 					    EditorGUILayoutUtils.DrawProperty(ser_encoded);
 					    EditorGUI.indentLevel--;
@@ -208,6 +213,8 @@ namespace CippSharp.Serialization
 			    EditorGUILayoutUtils.DrawHeader("Commands:");
 			    EditorGUI.indentLevel++;
 			    EditorGUILayoutUtils.DrawMiniButton("Save as Text", SaveAsTextFile);
+			    
+			    EditorGUILayoutUtils.DrawMiniButton("Set Dirty", () => {EditorUtility.SetDirty(target);});
 			    EditorGUI.indentLevel--;
 			    serializedThis.ApplyModifiedProperties();
 			    serializedObject.ApplyModifiedProperties();

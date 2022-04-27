@@ -1,7 +1,8 @@
 {
     "name": "com.CippSharp.Serialization.Samples",
     "references": [
-        "GUID:a94499d379ff77f4e9ca2c3425ec2ad7"
+        "GUID:a94499d379ff77f4e9ca2c3425ec2ad7",
+        "GUID:e2c767eaf4cfd23428c2cffbd7ba45bf"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -2,7 +2,7 @@
 Custom Data Serialization
 
 ## Dependencies
-- [Containers](https://github.com/ZiosTheCloudburster/CippSharpCoreContainers.git) → tag 1.0.X,
+- [Containers](https://github.com/ZiosTheCloudburster/CippSharpCoreContainers.git) → tag 1.1.X,
 - [UtilsAndExtensions](https://github.com/ZiosTheCloudburster/CippSharpCoreUtilsAndExtensions.git) → tag 1.1.X
 
 ### Content:

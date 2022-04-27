@@ -1,4 +1,5 @@
-﻿using System;
+﻿#if UNITY_EDITOR
+using System;
 using System.IO;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -7,15 +8,15 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace CippSharp.Serialization.Examples
+namespace CippSharp.Serialization.Samples
 {
     [ExecuteInEditMode]
-    public class SerializableExample : MonoBehaviour
+    internal class SerializableExample : MonoBehaviour
     {
         /// <summary>
         /// A nicer contextual name usable for logs.
         /// </summary>
-        public static readonly string LogName = string.Format("[{0}]: ", typeof(SerializableExample).Name);
+        public static readonly string LogName = $"[{typeof(SerializableExample).Name}]: ";
 
         [Header("Data:")]
         public BinaryHolder binaryHolder = null;
@@ -90,3 +91,4 @@ namespace CippSharp.Serialization.Examples
         }
     }
 }
+#endif
